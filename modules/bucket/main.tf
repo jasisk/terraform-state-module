@@ -5,10 +5,6 @@ locals {
     kms = "aws:kms"
     aes = "AES256"
   }
-  tags = {
-    LastModifiedTime = "${timestamp()}"
-    LastModifiedBy = "${var.modified_by}"
-  }
 }
 
 resource "aws_s3_bucket" "state" {
@@ -19,10 +15,10 @@ resource "aws_s3_bucket" "state" {
   }
 
   lifecycle {
-    ignore_changes = ["tags.LastModifiedTime", "tags.LastModifiedBy"]
+    ignore_changes = ["tags.LastModifiedBy", "tags.LastModifiedTime"]
   }
 
-  tags = "${merge(var.tags, local.tags)}"
+  tags = "${var.tags}"
 }
 
 data "aws_iam_policy_document" "bucket_require_sse" {

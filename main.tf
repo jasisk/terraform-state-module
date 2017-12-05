@@ -1,10 +1,14 @@
 provider "aws" {}
 
+module "tags" {
+  source = "github.com/jasisk/terraform-aws-default-tags?ref=0.0.1"
+}
+
 module "bucket" {
   source = "./modules/bucket"
 
   bucket_prefix = "${var.bucket_prefix}"
-  modified_by = "${var.caller_arn}"
+  tags = "${module.tags.map}"
 }
 
 module "roles" {
