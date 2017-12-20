@@ -1,5 +1,9 @@
 variable "bucket_prefix" {
-  type = "string"
+  default = ""
+}
+
+variable "bucket" {
+  default = ""
 }
 
 variable "tags" {

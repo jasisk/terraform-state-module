@@ -1,5 +1,9 @@
+variable "bucket" {
+  default = ""
+}
+
 variable "bucket_prefix" {
-  type = "string"
+  default = ""
 }
 
 variable "trusted_account_id" {

@@ -7,8 +7,24 @@ locals {
   }
 }
 
+resource "aws_s3_bucket" "state_with_prefix" {
+  count = "${var.bucket_prefix != "" ? 1 : 0}"
+  bucket_prefix = "${var.bucket_prefix}"
+
+  versioning {
+    enabled = true
+  }
+
+  lifecycle {
+    ignore_changes = ["tags.LastModifiedBy", "tags.LastModifiedTime"]
+  }
+
+  tags = "${var.tags}"
+}
+
 resource "aws_s3_bucket" "state" {
-  bucket_prefix = "tf-state-${var.bucket_prefix}-"
+  count = "${var.bucket_prefix == "" ? 1 : 0}"
+  bucket = "${var.bucket}"
 
   versioning {
     enabled = true
@@ -69,13 +85,13 @@ data "template_file" "bucket_policy" {
   template = "${data.aws_iam_policy_document.bucket_require_sse.json}"
 
   vars {
-    arn = "${aws_s3_bucket.state.arn}"
+    arn = "${var.bucket_prefix != "" ? aws_s3_bucket.state_with_prefix.arn : aws_s3_bucket.state.arn}"
   }
 }
 
 resource "aws_s3_bucket_policy" "state" {
   count = "${local.require_encryption ? 1 : 0}"
 
-  bucket = "${aws_s3_bucket.state.id}"
+  bucket = "${var.bucket_prefix != "" ? aws_s3_bucket.state_with_prefix.id : aws_s3_bucket.state.id}"
   policy = "${data.template_file.bucket_policy.rendered}"
 }

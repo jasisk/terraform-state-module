@@ -7,6 +7,7 @@ module "tags" {
 module "bucket" {
   source = "./modules/bucket"
 
+  bucket = "${var.bucket}"
   bucket_prefix = "${var.bucket_prefix}"
   tags = "${module.tags.map}"
 }
