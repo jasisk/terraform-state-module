@@ -85,13 +85,13 @@ data "template_file" "bucket_policy" {
   template = "${data.aws_iam_policy_document.bucket_require_sse.json}"
 
   vars {
-    arn = "${var.bucket_prefix != "" ? aws_s3_bucket.state_with_prefix.arn : aws_s3_bucket.state.arn}"
+    arn = "${var.bucket_prefix != "" ? join("|", aws_s3_bucket.state_with_prefix.*.arn) : join("|", aws_s3_bucket.state.*.arn)}"
   }
 }
 
 resource "aws_s3_bucket_policy" "state" {
   count = "${local.require_encryption ? 1 : 0}"
 
-  bucket = "${var.bucket_prefix != "" ? aws_s3_bucket.state_with_prefix.id : aws_s3_bucket.state.id}"
+  bucket = "${var.bucket_prefix != "" ? join("|", aws_s3_bucket.state_with_prefix.*.id) : join("|", aws_s3_bucket.state.*.id)}"
   policy = "${data.template_file.bucket_policy.rendered}"
 }
