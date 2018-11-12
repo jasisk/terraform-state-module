@@ -2,10 +2,6 @@ variable "bucket_prefix" {
   type = "string"
 }
 
-variable "trusted_account_id" {
-  type = "string"
-}
-
 variable "state_file_path" {
   default = "terraform.tfstate"
 }
@@ -19,9 +15,5 @@ variable "write_remote_state_data" {
 }
 
 variable "name" {
-  type = "string"
-}
-
-variable "aws_region" {
   type = "string"
 }
